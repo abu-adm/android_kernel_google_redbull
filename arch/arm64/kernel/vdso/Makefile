@@ -52,6 +52,7 @@ endif
 
 ccflags-y := -fno-common -fno-builtin -fno-stack-protector
 ccflags-y += -DDISABLE_BRANCH_PROFILING
+ccflags-y += $(call cc-option, -fno-whole-program)
 
 VDSO_LDFLAGS := -Bsymbolic
 
