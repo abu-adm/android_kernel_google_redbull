@@ -3698,8 +3698,12 @@ void mmc_rescan(struct work_struct *work)
 		goto out;
 	}
 
-	mmc_rescan_try_freq(host, host->f_min);
-	host->err_stats[MMC_ERR_CMD_TIMEOUT] = 0;
+	for (i = 0; i < ARRAY_SIZE(freqs); i++) {
+		if (!mmc_rescan_try_freq(host, max(freqs[i], host->f_min)))
+			break;
+		if (freqs[i] <= host->f_min)
+			break;
+	}
 	mmc_release_host(host);
 
  out:
