@@ -319,7 +319,7 @@ void persistent_ram_save_old(struct persistent_ram_zone *prz, bool use_alt)
 	 * (which would be extremely unlikely given kmsg buffers usually
 	 * exceed prz buffer sizes).
 	 */
-	if (prz->old_log && prz->old_log_alloc_size < size)
+	if (prz->old_log && prz->old_log_size != size)
 		persistent_ram_free_old(prz);
 
 	if (!prz->old_log) {
