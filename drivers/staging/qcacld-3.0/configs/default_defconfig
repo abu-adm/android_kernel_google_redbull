@@ -124,7 +124,7 @@ CONFIG_QCOM_TDLS := y
 CONFIG_WLAN_SYSFS := y
 CONFIG_WLAN_POWER_DEBUG := y
 #Enable Beacon Reception Stats
-CONFIG_FEATURE_BECN_STATS := y
+CONFIG_FEATURE_BECN_STATS := n
 endif
 
 CONFIG_QCACLD_FEATURE_GREEN_AP := y
@@ -220,7 +220,7 @@ ifeq ($(CONFIG_ROME_IF),usb)
 endif
 
 
-CONFIG_FEATURE_EPPING := y
+CONFIG_FEATURE_EPPING := n
 
 #Flag to enable offload packets feature
 CONFIG_WLAN_OFFLOAD_PACKETS := y
@@ -306,7 +306,7 @@ ifeq (y,$(findstring y,$(CONFIG_ICNSS) $(CONFIG_ICNSS_MODULE)))
 CONFIG_WIFI_3_0_ADRASTEA := y
 CONFIG_ADRASTEA_RRI_ON_DDR := y
 # Enable athdiag procfs debug support for adrastea
-CONFIG_ATH_PROCFS_DIAG_SUPPORT := y
+CONFIG_ATH_PROCFS_DIAG_SUPPORT := n
 # Enable 11AC TX compact feature for adrastea
 CONFIG_ATH_11AC_TXCOMPACT := y
 ifeq ($(CONFIG_QMI_SUPPORT), y)
@@ -359,7 +359,7 @@ CONFIG_QCA_WIFI_QCA8074 := y
 CONFIG_QCA_WIFI_QCA8074_VP := y
 CONFIG_DP_INTR_POLL_BASED := y
 CONFIG_TX_PER_PDEV_DESC_POOL := y
-CONFIG_DP_TRACE := y
+CONFIG_DP_TRACE := n
 CONFIG_FEATURE_TSO := y
 CONFIG_DP_LFR := y
 CONFIG_DUP_RX_DESC_WAR := y
@@ -398,21 +398,21 @@ ifneq ($(TARGET_BUILD_VARIANT),user)
 endif
 
 #Enable WLAN/Power debugfs feature only if debug_fs is enabled
-ifeq ($(CONFIG_DEBUG_FS), y)
+#ifeq ($(CONFIG_DEBUG_FS), y)
        # Flag to enable debugfs. Depends on CONFIG_DEBUG_FS in kernel
        # configuration.
-       CONFIG_WLAN_DEBUGFS := y
+#       CONFIG_WLAN_DEBUGFS := y
 
-       CONFIG_WLAN_MWS_INFO_DEBUGFS := y
-endif
+#       CONFIG_WLAN_MWS_INFO_DEBUGFS := y
+#endif
 
 # Feature flags which are not (currently) configurable via Kconfig
 
 #Whether to build debug version
-BUILD_DEBUG_VERSION := y
+BUILD_DEBUG_VERSION := n
 
 #Enable this flag to build driver in diag version
-BUILD_DIAG_VERSION := y
+BUILD_DIAG_VERSION := n
 
 ifeq ($(CONFIG_SLUB_DEBUG), y)
 	PANIC_ON_BUG := y
@@ -662,7 +662,7 @@ CONFIG_QCA_SIGNED_SPLIT_BINARY_SUPPORT := n
 CONFIG_QCA_SINGLE_BINARY_SUPPORT := n
 
 #Enable collecting target RAM dump after kernel panic
-CONFIG_TARGET_RAMDUMP_AFTER_KERNEL_PANIC := y
+CONFIG_TARGET_RAMDUMP_AFTER_KERNEL_PANIC := n
 
 #Flag to enable/disable secure firmware feature
 CONFIG_FEATURE_SECURE_FIRMWARE := n
@@ -675,7 +675,7 @@ CONFIG_WLAN_LOGGING_BUFFERS_DYNAMICALLY := n
 CONFIG_WLAN_DFS_STATIC_MEM_ALLOC := y
 
 #Flag to enable HTC credit history feature
-CONFIG_FEATURE_HTC_CREDIT_HISTORY := y
+CONFIG_FEATURE_HTC_CREDIT_HISTORY := n
 
 #Flag to enable MTRACE feature
 CONFIG_TRACE_RECORD_FEATURE := y
@@ -783,7 +783,7 @@ CONFIG_WMI_ROAM_SUPPORT := y
 CONFIG_WMI_CONCURRENCY_SUPPORT := y
 CONFIG_WMI_STA_SUPPORT := y
 
-CONFIG_DP_TRACE := y
+CONFIG_DP_TRACE := n
 
 ifeq ($(CONFIG_HELIUMPLUS), y)
 ifneq ($(CONFIG_FORCE_ALLOC_FROM_DMA_ZONE), y)
