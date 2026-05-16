@@ -703,6 +703,10 @@ else
 KBUILD_CFLAGS   += -O3
 endif
 
+ifeq ($(cc-name),clang)
+KBUILD_CFLAGS  += -mcpu=cortex-a76+crypto+crc -mtune=cortex-a76 -march=armv8.2-a+lse+fp16+dotprod
+endif
+
 ifdef CONFIG_CC_WERROR
 KBUILD_CFLAGS  += -Werror
 endif
