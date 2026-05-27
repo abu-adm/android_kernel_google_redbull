@@ -413,8 +413,7 @@ static void __init hyp_mode_check(void)
 		pr_info("CPU: All CPU(s) started at EL1\n");
 }
 
-#if defined(CONFIG_QCOM_SCM_MODULE) && \
-	defined(CONFIG_QCOM_QHEE_ENABLE_MEM_PROTECTION)
+#if !defined(CONFIG_QCOM_QHEE_ENABLE_MEM_PROTECTION)
 int __init __weak scm_enable_mem_protection(void)
 {
 	return 0;
