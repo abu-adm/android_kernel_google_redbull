@@ -12,7 +12,8 @@ $(info -- KDIR: $(KDIR))
 $(info -- MDIR: $(MDIR))
 
 # compliant to last upstream kernel change as of c20d48a
-CFLAGS_ksu.o += -DKSU_VERSION=32550
+#CFLAGS_ksu.o += -DKSU_VERSION=32550
+CFLAGS_ksu.o += -DKSU_VERSION=33129   # kernelsu-next version, for ksu-next manager app
 
 ifndef KSU_EXPECTED_SIZE
 KSU_EXPECTED_SIZE := 0x033b
