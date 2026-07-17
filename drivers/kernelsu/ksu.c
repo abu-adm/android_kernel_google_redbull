@@ -47,7 +47,7 @@
 #include "avc.h"
 #endif
 
-// kernel compat, lite ones
+// kernel compat
 #include "kernel_compat.h"
 
 #include "policy/app_profile.h"
@@ -141,9 +141,6 @@
 #if defined(CONFIG_KSU_KPROBES_KSUD) && !defined(CONFIG_KSU_TAMPER_SYSCALL_TABLE)
 #include "hook/kp_ksud.c"
 #endif
-
-// __weak fn's
-#include "kernel_compat.c"
 
 struct cred* ksu_cred;
 
