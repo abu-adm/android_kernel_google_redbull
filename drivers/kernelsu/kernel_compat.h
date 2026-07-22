@@ -33,6 +33,7 @@ static inline struct key *ksu_get_current_session_keyring() { return rcu_derefer
 static inline struct key *ksu_get_current_session_keyring() { return rcu_dereference(current->cred->tgcred->session_keyring); }
 #endif
 
+__attribute__((cold))
 static noinline void ksu_grab_init_session_keyring()
 {
 	if (init_session_keyring)
@@ -84,29 +85,6 @@ static inline void ksu_grab_init_session_keyring() {} // no-op
 #define __ro_after_init
 #endif
 
-#ifndef __nocfi
-#define __nocfi
-#endif
-
-extern long copy_from_kernel_nofault(void *dst, const void *src, size_t size);
-
-/**
- * ksu_copy_from_user_retry
- * try nofault copy first, if it fails, try with plain
- * paramters are the same as copy_from_user
- * 0 = success
- */
-extern long copy_from_user_nofault(void *dst, const void __user *src, size_t size);
-static __always_inline long ksu_copy_from_user_retry(void *to, const void __user *from, unsigned long count)
-{
-	long ret = copy_from_user_nofault(to, from, count);
-	if (likely(!ret))
-		return ret;
-
-	// we faulted! fallback to slow path
-	return copy_from_user(to, from, count);
-}
-
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 0, 0)
 #define d_inode(dentry) ((dentry)->d_inode)
 #endif
@@ -143,13 +121,13 @@ static inline void ksu_kvfree(void *buf)
 #define TWA_RESUME 1
 #endif
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)
-#define ksu_close_fd close_fd
-// this is ksys_close, however that is spotty to use, as 5.10 backported close_fd and rekt ksys_close
-#elif LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 0) && LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0)
-#define ksu_close_fd(fd) __close_fd(current->files, fd)
+// this is ksys_close, however that is spotty to use 
+// as 5.10 backported close_fd and rekt ksys_close
+// so we use what it does internally, __close_fd
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 0) && LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0)
+#define close_fd(fd) __close_fd(current->files, fd)
 #elif LINUX_VERSION_CODE < KERNEL_VERSION(3, 7, 0)
-#define ksu_close_fd sys_close
+#define close_fd sys_close
 #endif
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 6, 0)
@@ -223,46 +201,38 @@ struct user_arg_ptr {
 #define untagged_addr(addr) (addr)
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 3, 0)
-// not 1:1, no alignment optimization/guardchecks, but it should be fine for our use case.
-// https://elixir.bootlin.com/linux/v4.3/source/lib/string.c#L154
-__weak ssize_t strscpy(char *dest, const char *src, size_t count)
+extern long copy_from_kernel_nofault(void *dst, const void *src, size_t size);
+
+/**
+ * ksu_copy_from_user_retry
+ * try nofault copy first, if it fails, try with plain
+ * paramters are the same as copy_from_user
+ * 0 = success
+ */
+extern long copy_from_user_nofault(void *dst, const void __user *src, size_t size);
+static __always_inline long ksu_copy_from_user_retry(void *to, const void __user *from, unsigned long count)
 {
-	if (!count)
-		return -E2BIG;
+	long ret = copy_from_user_nofault(to, from, count);
+	if (likely(!ret))
+		return ret;
 
-	// look for the first null terminator w/in count
-	// alternatively, strnlen?
-	const char *end = __builtin_memchr(src, '\0', count);
-	if (!end)
-		goto no_null_term;
-
-	size_t copy_len = end - src;
-	__builtin_memcpy(dest, src, copy_len);
-	dest[copy_len] = '\0';
-	return copy_len;
-
-no_null_term:
-	__builtin_memcpy(dest, src, count - 1);
-	dest[count - 1] = '\0';
-	return -E2BIG;
+	// we faulted! fallback to slow path
+	return copy_from_user(to, from, count);
 }
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 2, 0) // caller is reponsible for sanity!
+static inline void ksu_zeroed_strncpy(char *dest, const char *src, size_t count)
+{
+	// this is actually faster due to dead store elimination
+	// count - 1 as implicit null termination
+	__builtin_memset(dest, 0, count);
+	__builtin_strncpy(dest, src, count - 1);
+}
+#define strscpy_pad ksu_zeroed_strncpy
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 2, 0)
-// https://elixir.bootlin.com/linux/v5.2/source/lib/string.c#L240
-__weak ssize_t strscpy_pad(char *dest, const char *src, size_t count)
-{
-	ssize_t written;
-
-	written = strscpy(dest, src, count);
-	if (written < 0 || written == count - 1)
-		return written;
-
-	memset(dest + written + 1, 0, count - written - 1);
-
-	return written;
-}
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 3, 0)
+#define strscpy ksu_zeroed_strncpy
 #endif
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 0, 0)
