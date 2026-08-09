@@ -75,12 +75,12 @@ KSU_SRC := drivers/kernelsu
 #$(shell cd $(KSU_SRC); [ -f ../.git/shallow ] && $(GIT_BIN) fetch --unshallow)
 #KSU_LOCAL_VERSION := $(shell cd $(KSU_SRC); $(GIT_BIN) rev-list --count HEAD)
 #KSU_VERSION := $(shell expr 30000 + $(KSU_LOCAL_VERSION) + 700)
-KSU_VERSION := 35040
+KSU_VERSION := 35055
 
 #KSU_TAG_NAME    := $(shell cd $(KSU_SRC); $(GIT_BIN) describe --abbrev=0 --tags 2>/dev/null || echo "v4.1.0")
 KSU_TAG_NAME    := v4.1.0
 #KSU_COMMIT_SHA  := $(shell cd $(KSU_SRC); $(GIT_BIN) rev-parse --short=8 HEAD 2>/dev/null || echo "unknown")
-KSU_COMMIT_SHA := e00c72a5
+KSU_COMMIT_SHA := beaaea0e
 #ifneq ($(shell cd $(KSU_SRC); $(GIT_BIN) diff-index --quiet HEAD; echo $$?),0)
 #KSU_COMMIT_SHA  := $(KSU_COMMIT_SHA)-dirty
 #endif
@@ -102,7 +102,7 @@ ccflags-y += -DKSU_VERSION=$(KSU_VERSION)
 ccflags-y += -DKSU_VERSION_FULL=\"$(KSU_VERSION_FULL)\"
 
 ifdef CONFIG_KSU_MULTI_MANAGER_SUPPORT
-$(info -- Supported Unofficial Manager: MKSU, RKSU, KOWSU, SukiSU-Ultra, ReSukiSU, KSU-Next )
+$(info -- Supported Unofficial Manager: MKSU, RKSU, KOWSU, SukiSU-Ultra, ReSukiSU )
 endif
 
 KERNEL_VERSION := $(VERSION).$(PATCHLEVEL)
