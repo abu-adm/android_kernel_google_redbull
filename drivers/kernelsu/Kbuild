@@ -76,12 +76,12 @@ KSU_SRC := drivers/kernelsu
 #$(shell cd $(KSU_SRC); [ -f ../.git/shallow ] && $(GIT_BIN) fetch --unshallow)
 #KSU_LOCAL_VERSION := $(shell cd $(KSU_SRC); $(GIT_BIN) rev-list --count HEAD)
 #KSU_VERSION := $(shell expr 30000 + $(KSU_LOCAL_VERSION) + 700)
-KSU_VERSION := 35106
+KSU_VERSION := 35139
 
 #KSU_TAG_NAME    := $(shell cd $(KSU_SRC); $(GIT_BIN) describe --abbrev=0 --tags 2>/dev/null || echo "v4.1.0")
 KSU_TAG_NAME    := v4.2.0-rc1
 #KSU_COMMIT_SHA  := $(shell cd $(KSU_SRC); $(GIT_BIN) rev-parse --short=8 HEAD 2>/dev/null || echo "unknown")
-KSU_COMMIT_SHA := a543d21c
+KSU_COMMIT_SHA := f4c4923e
 #ifneq ($(shell cd $(KSU_SRC); $(GIT_BIN) diff-index --quiet HEAD; echo $$?),0)
 #KSU_COMMIT_SHA  := $(KSU_COMMIT_SHA)-dirty
 #endif
@@ -172,7 +172,7 @@ ifdef CONFIG_KSU_TRACEPOINT_HOOK
       $(info -- Current Kernel Type: $(KERNEL_TYPE))
       $(info -- If you really want to continue, go to Kbuild and comment out this warning.)
       $(info -- Usually, this error occurs because you forgot to enable some kernel configurations.)
-      $(info -- Read: https://resukisu.github.io/guide/manual-integrate.html)
+      $(info -- Read: https://resukisu.org/guide/manual-integrate.html)
       $(error TP hooks are incompatible with Non-GKI/GKI 1.0 kernels.)
     endif
   endif
